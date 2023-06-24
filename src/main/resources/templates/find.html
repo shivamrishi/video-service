@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find</title>
+  <script>
+    function redirectToFind() {
+      var name = document.getElementById("name").value;
+      var id = document.getElementById("id").value;
+      
+      // Check if at least one field is filled
+      var queryString="";
+      if (name) {
+    	  queryString = queryString+ "name=" + encodeURIComponent(name);
+      }
+      if(id){
+    	  if(queryString!="");
+    	  	queryString = queryString+"&";
+    	  
+    	  queryString = queryString+ "id=" + encodeURIComponent(id);
+      }
+        
+      if(queryString!=""){
+    	  window.location.href = "/find?"+queryString;
+      }else{
+        alert("Please enter a name or an ID.");
+      }
+      
+    }
+  </script>
+</head>
+<body>
+  <form>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name"><br><br>
+
+    <label for="id">ID:</label>
+    <input type="text" id="id" name="id"><br><br>
+
+    <input type="button" value="Submit" onclick="redirectToFind()">
+  </form>
+</body>
+</html>

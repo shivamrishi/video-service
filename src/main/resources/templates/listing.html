@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Listing</title>
+</head>
+<body>
+
+    <div th:each="object : ${list}">
+        <button th:text="${object.getId()+ ' ' + object.getTitle()}" th:attr="data-link=${object.getDataUrl()}" onclick="window.open(this.dataset.link, '_blank')"></button>
+    </div>
+    
+</body>
+</html> 

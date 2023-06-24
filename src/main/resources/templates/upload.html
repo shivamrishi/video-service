@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Upload</title>
+</head>
+<body>
+  <h1>Video Upload</h1>
+
+  <div id="uploadForm">
+    <label for="name">Video Name:</label>
+    <input type="text" id="name" placeholder="Enter video name" required>
+    <input type="text" id="description" placeholder="Enter subject name">
+    <button onclick="sendVideoAttributes()">Submit</button>
+  </div>
+
+  <div id="uploadSection" style="display: none;">
+    <h3>Upload Video</h3>
+    <form id="iForm">
+    <input type="file" id="videoFile" required>
+    <button onclick="uploadVideo()">Upload</button>
+    </form>
+  </div>
+
+<dialog id="success-dialog">
+  <p>Video uploaded successfully!</p>
+  <button onclick="window.location.href = '/'">Go to Homepage</button>
+</dialog>
+
+  <script>
+  
+  var video={
+    	  "id": 0,
+		  "title": "",
+    	  "duration": 0, //duration, 
+    	  "location": null,
+    	  "subject": "",
+   		  "contentType": "mp4",
+   		  "dataUrl": null		 
+      };
+  
+    function sendVideoAttributes() {
+      var name = document.getElementById('name').value;
+      var desc = document.getElementById('description').value;
+      // Send POST request to server with video attributes
+	  video.title=name;
+      video.subject = desc;
+      
+      fetch('/video', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(video)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.id) {
+          // Server returned a valid ID, enable upload section
+          document.getElementById('uploadForm').style.display = 'none';
+          document.getElementById('uploadSection').style.display = 'block';
+          document.getElementById('videoFile').disabled = false;
+          video=data;
+        } else {
+          // Server did not return a valid ID, show error message or handle accordingly
+          console.log('Error: Invalid response from server');
+        }
+      })
+      .catch(error => {
+        console.log('Error:', error);
+      });
+    }
+
+    function uploadVideo() {
+      var videoFile = document.getElementById('videoFile').files[0];
+      var id = video.id;
+      // Create FormData object and append the video file
+      var formData = new FormData();
+      formData.append('data', videoFile);
+	  console.log(id);
+      // Send POST request to server with video file
+      fetch('/video/' + id + '/data', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        // Handle response
+        document.getElementById('uploadSection').style.display = 'none';
+        document.getElementById('videoFile').disabled = true;
+        console.log('Video uploaded successfully');
+        var successDialog = document.getElementById('success-dialog');
+        successDialog.show();
+      })
+      .catch(error => {
+        console.log('Error:', error);
+      });
+    }
+  </script>
+</body>
+</html>
